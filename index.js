@@ -3,8 +3,38 @@ const cors = require('cors');
 const app = express();
 require("dotenv").config()
 const port = process.env.PORT || 5000;
+const multer = require("multer")
+const path = require("path")
 
-console.log(process.env.DB_USER);
+
+//File upload folder
+
+const UPLOAD_FOLDER = "./uploads/";
+
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, UPLOAD_FOLDER);
+    },
+    filename: function (req, file, cb) {
+        const fileExt = path.extname(file.originalname);
+        const fileName = file.originalname.replace(fileExt, "").toLowerCase().split(" ").join("-") + "-" + Date.now();
+        cb(null, fileName + fileExt);
+    }
+})
+
+
+var upload = multer({
+    storage: storage,
+    limits: {
+        fileSize: 1024 * 1024 * 20 // 20MB
+    }
+})
+
+app.post('/upload', upload.single("file"), (req, res) => {
+    res.send("Helo World")
+})
+
 
 
 //middleware
@@ -26,22 +56,32 @@ const client = new MongoClient(uri, {
 
 async function run() {
     try {
-        // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
-        // Send a ping to confirm a successful connection
+        const todoCollections = client.db('todoList').collection('todos');
+
+
+        app.get('/todos', async (req, res) => {
+            try {
+                const cursor = todoCollections.find();
+                const result = await cursor.toArray();
+                res.send(result);
+            }
+            catch (error) {
+                console.error("Error fetching todos:", error);
+                res.status(500).send({ message: "Failed to fetch todos" });
+            }
+        });
+
+
         await client.db("admin").command({ ping: 1 });
-        console.log("Pinged your deployment. You successfully connected to MongoDB!");
-    } finally {
-        // Ensures that the client will close when you finish/error
-        await client.close();
+        console.log("Pinged your deployment. Successfully connected to MongoDB!");
+    } catch (error) {
+        console.error("Failed to connect to MongoDB:", error);
     }
 }
 run().catch(console.dir);
 
 
-app.get('/', (req, res) => {
-    res.send('Hello, World!');
-})
 
 app.listen(port, (err, res) => {
     console.log(`Simple operation on port ${port}`);
