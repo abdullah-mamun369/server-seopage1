@@ -3,8 +3,8 @@ const cors = require('cors');
 const multer = require("multer");
 const path = require("path");
 const mongoose = require("mongoose");
-const UserModel = require("./models/User.js");
-const TodoModel = require("./models/Todo.js");
+const UserModel = require("../models/User.js");
+const TodoModel = require("../models/Todo.js");
 require("dotenv").config();
 
 
@@ -28,7 +28,7 @@ app.use(express.json());
 
 // File upload folder
 const fs = require('fs');
-const UPLOAD_FOLDER = "./uploads/";
+const UPLOAD_FOLDER = "../uploads/";
 
 if (!fs.existsSync(UPLOAD_FOLDER)) {
     fs.mkdirSync(UPLOAD_FOLDER);
@@ -53,7 +53,7 @@ const upload = multer({
 });
 
 // MongoDB connection using Mongoose
-mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@jobinterview.vky0v.mongodb.net/todoList?retryWrites=true&w=majority`)
+mongoose.connect(`mongodb+srv://mamunbdcontact:vxiU36aC5NFvx6oc@jobinterview.vky0v.mongodb.net/todoList?retryWrites=true&w=majority`)
     .then(() => console.log("Connected to MongoDB successfully"))
     .catch(err => console.error("Failed to connect to MongoDB:", err));
 
