@@ -4,6 +4,7 @@ const multer = require("multer");
 const path = require("path");
 const mongoose = require("mongoose");
 const UserModel = require("./models/User.js");
+const TodoModel = require("./models/Todo.js");
 require("dotenv").config();
 
 const app = express();
@@ -55,6 +56,29 @@ app.post('/upload', upload.single("file"), (req, res) => {
             console.error(err);
             res.status(500).send("Error saving file information");
         });
+});
+
+//Get attachements from api
+app.get('/users', async (req, res) => {
+    try {
+        const users = await UserModel.find();  // Fetch all users from the UserModel collection
+        res.json(users);
+    } catch (error) {
+        console.error("Error fetching users:", error);
+        res.status(500).send({ message: "Failed to fetch users" });
+    }
+});
+
+// get todos from api
+
+app.get('/todos', async (req, res) => {
+    try {
+        const users = await TodoModel.find();  // Fetch all users from the UserModel collection
+        res.json(users);
+    } catch (error) {
+        console.error("Error fetching users:", error);
+        res.status(500).send({ message: "Failed to fetch users" });
+    }
 });
 
 // Default route
