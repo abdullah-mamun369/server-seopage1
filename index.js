@@ -18,7 +18,7 @@ const corsConfig = {
 const app = express();
 const port = process.env.PORT || 5000;
 
-app.options("", cors(Config));
+app.options("", cors(corsConfig));
 app.use(cors(corsConfig));
 
 
@@ -53,12 +53,10 @@ const upload = multer({
 });
 
 // MongoDB connection using Mongoose
-mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@jobinterview.vky0v.mongodb.net/?retryWrites=true&w=majority&appName=jobInterview`, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
+mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@jobinterview.vky0v.mongodb.net/todoList?retryWrites=true&w=majority`)
     .then(() => console.log("Connected to MongoDB successfully"))
     .catch(err => console.error("Failed to connect to MongoDB:", err));
+
 
 // Route to upload file
 app.post('/upload', upload.single("file"), (req, res) => {
